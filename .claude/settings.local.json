@@ -5,7 +5,9 @@
       "Bash(gh repo view:*)",
       "Bash(npm install)",
       "Bash(npm run lint)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(git push:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

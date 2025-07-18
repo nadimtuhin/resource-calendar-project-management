@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Project, Resource } from '../../types';
 import { X, Calendar, Trash2 } from 'lucide-react';
 import { PRIORITY_COLORS } from '../../constants/colors';
+import { MODAL_LEVELS } from '../../constants/zIndex';
 
 interface OverflowModalProps {
   isOpen: boolean;
@@ -50,7 +51,10 @@ export const OverflowModal: React.FC<OverflowModalProps> = ({
   if (!isOpen || !resource) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+      style={{ zIndex: MODAL_LEVELS.OVERFLOW }}
+    >
       <div className="bg-white rounded-lg p-6 w-96 max-w-90vw">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">

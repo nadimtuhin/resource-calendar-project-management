@@ -1,5 +1,5 @@
 import React from 'react';
-import { Resource, Project } from '../../types';
+import { Resource, Project, Holiday, Leave } from '../../types';
 import { DayCell } from './DayCell';
 import { Edit2, Trash2 } from 'lucide-react';
 import { ContiguousProjectBar } from './ContiguousProjectBar';
@@ -15,6 +15,9 @@ interface ResourceRowProps {
   onDeleteProject: (projectId: string) => void;
   onClearDay: (resourceId: string, date: string) => void;
   onShowOverflow: (projects: Project[], date: Date) => void;
+  isHoliday?: (date: Date) => Holiday | null;
+  isWeekend?: (date: Date) => boolean;
+  isLeaveDay?: (date: Date, resourceId: string) => Leave | null;
 }
 
 export const ResourceRow: React.FC<ResourceRowProps> = ({
@@ -27,6 +30,9 @@ export const ResourceRow: React.FC<ResourceRowProps> = ({
   onDeleteProject,
   onClearDay,
   onShowOverflow,
+  isHoliday,
+  isWeekend,
+  isLeaveDay,
 }) => {
   const getProjectsForDate = (date: Date): Project[] => {
     const dateStr = date.toISOString().split('T')[0];
@@ -90,6 +96,9 @@ export const ResourceRow: React.FC<ResourceRowProps> = ({
             resource={resource}
             onClearDay={onClearDay}
             onShowOverflow={onShowOverflow}
+            holiday={isHoliday?.(date)}
+            isWeekend={isWeekend?.(date)}
+            leave={isLeaveDay?.(date, resource.id)}
           />
         ))}
         
@@ -103,8 +112,11 @@ export const ResourceRow: React.FC<ResourceRowProps> = ({
                 resourceColor={resource.color}
                 startIndex={group.startIndex}
                 span={group.span}
+                dates={dates}
                 onEdit={onEditProject}
                 onDelete={onDeleteProject}
+                isHoliday={isHoliday}
+                isWeekend={isWeekend}
               />
             ))}
           </div>

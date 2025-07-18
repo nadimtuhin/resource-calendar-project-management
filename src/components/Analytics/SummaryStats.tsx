@@ -1,21 +1,21 @@
 import React from 'react';
-import { Resource, Project } from '../../types';
-import { Users, Calendar, AlertCircle, Clock, BarChart3 } from 'lucide-react';
-import { getDateRange } from '../../utils/dateUtils';
+import { Resource, Project, WorkDayStats } from '../../types';
+import { Users, Calendar, AlertCircle, Clock, BarChart3, CalendarDays } from 'lucide-react';
 import { getUtilizationColor } from '../../constants/colors';
 
 interface SummaryStatsProps {
   resources: Resource[];
   projects: Project[];
+  getWorkDayStats: (resourceId: string) => WorkDayStats;
 }
 
 export const SummaryStats: React.FC<SummaryStatsProps> = ({
   resources,
   projects,
+  getWorkDayStats,
 }) => {
   const calculateStats = () => {
     const today = new Date().toISOString().split('T')[0];
-    const dates = getDateRange(3);
     
     // Calculate today's work
     const todayProjects = projects.filter(project => 
@@ -27,28 +27,25 @@ export const SummaryStats: React.FC<SummaryStatsProps> = ({
       project.priority === 'high'
     );
 
+    // Calculate aggregate work day statistics
+    const aggregateStats = resources.reduce((acc, resource) => {
+      const stats = getWorkDayStats(resource.id);
+      return {
+        totalWorkDays: acc.totalWorkDays + stats.totalWorkDays,
+        assignedProjectDays: acc.assignedProjectDays + stats.assignedProjectDays,
+        leaveDays: acc.leaveDays + stats.leaveDays,
+        availableDays: acc.availableDays + stats.availableDays,
+      };
+    }, {
+      totalWorkDays: 0,
+      assignedProjectDays: 0,
+      leaveDays: 0,
+      availableDays: 0,
+    });
+
     // Calculate average utilization
-    const totalUtilization = resources.reduce((sum, resource) => {
-      const busyDays = new Set<string>();
-      
-      projects
-        .filter(project => project.resourceId === resource.id)
-        .forEach(project => {
-          const start = new Date(project.startDate);
-          const end = new Date(project.endDate);
-          const current = new Date(start);
-          
-          while (current <= end) {
-            busyDays.add(current.toISOString().split('T')[0]);
-            current.setDate(current.getDate() + 1);
-          }
-        });
-
-      return sum + Math.round((busyDays.size / dates.length) * 100);
-    }, 0);
-
-    const averageUtilization = resources.length > 0 
-      ? Math.round(totalUtilization / resources.length)
+    const averageUtilization = resources.length > 0 && aggregateStats.totalWorkDays > 0
+      ? Math.round(((aggregateStats.assignedProjectDays + aggregateStats.leaveDays) / aggregateStats.totalWorkDays) * 100)
       : 0;
 
     return {
@@ -57,6 +54,8 @@ export const SummaryStats: React.FC<SummaryStatsProps> = ({
       highPriorityProjects: highPriorityProjects.length,
       todayWork: todayProjects.length,
       averageUtilization,
+      totalWorkDays: aggregateStats.totalWorkDays,
+      availableDays: aggregateStats.availableDays,
     };
   };
 
@@ -82,8 +81,14 @@ export const SummaryStats: React.FC<SummaryStatsProps> = ({
       color: '#EF4444',
     },
     {
-      label: "Today's Work",
-      value: stats.todayWork,
+      label: 'Available Days',
+      value: stats.availableDays,
+      icon: CalendarDays,
+      color: '#8B5CF6',
+    },
+    {
+      label: 'Total Work Days',
+      value: stats.totalWorkDays,
       icon: Clock,
       color: '#F59E0B',
     },
@@ -97,7 +102,7 @@ export const SummaryStats: React.FC<SummaryStatsProps> = ({
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {statItems.map((item, index) => (
           <div key={index} className="text-center">
             <div className="flex items-center justify-center mb-2">

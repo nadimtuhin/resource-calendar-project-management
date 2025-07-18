@@ -1,20 +1,58 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Resource, Project } from '../types';
-import { saveResources, loadResources, saveProjects, loadProjects } from '../utils/storageUtils';
+import { Resource, Project, Holiday, HolidaySettings, Leave, WorkDayStats } from '../types';
+import { saveResources, loadResources, saveProjects, loadProjects, saveHolidaySettings, loadHolidaySettings, saveLeaves, loadLeaves } from '../utils/storageUtils';
 import { generateTestData } from '../utils/testData';
+
+// Helper function to get default date range
+const getDefaultDateRange = () => {
+  const today = new Date();
+  const startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1); // Last month
+  const endDate = new Date(today.getFullYear(), today.getMonth() + 4, 0); // Next 3 months (end of 4th month)
+  return { startDate, endDate };
+};
 
 export const useResourceCalendar = () => {
   const [resources, setResources] = useState<Resource[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [leaves, setLeaves] = useState<Leave[]>([]);
   const [loading, setLoading] = useState(true);
+  const [holidaySettings, setHolidaySettings] = useState<HolidaySettings>({
+    weekendDays: [5, 6], // Friday and Saturday (0 = Sunday, 1 = Monday, etc.)
+    holidays: [],
+    workingHours: {
+      start: '09:00',
+      end: '18:00',
+    },
+  });
+  
+  // Date range state
+  const [dateRange, setDateRange] = useState(() => {
+    const stored = localStorage.getItem('resource-calendar-date-range');
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        return {
+          startDate: new Date(parsed.startDate),
+          endDate: new Date(parsed.endDate),
+        };
+      } catch {
+        return getDefaultDateRange();
+      }
+    }
+    return getDefaultDateRange();
+  });
 
   // Load data from localStorage on mount
   useEffect(() => {
     const savedResources = loadResources();
     const savedProjects = loadProjects();
+    const savedHolidaySettings = loadHolidaySettings();
+    const savedLeaves = loadLeaves();
     
     setResources(savedResources);
     setProjects(savedProjects);
+    setHolidaySettings(savedHolidaySettings);
+    setLeaves(savedLeaves);
     setLoading(false);
   }, []);
 
@@ -31,6 +69,30 @@ export const useResourceCalendar = () => {
       saveProjects(projects);
     }
   }, [projects, loading]);
+
+  // Save holiday settings to localStorage whenever they change
+  useEffect(() => {
+    if (!loading) {
+      saveHolidaySettings(holidaySettings);
+    }
+  }, [holidaySettings, loading]);
+
+  // Save date range to localStorage whenever it changes
+  useEffect(() => {
+    if (!loading) {
+      localStorage.setItem('resource-calendar-date-range', JSON.stringify({
+        startDate: dateRange.startDate.toISOString(),
+        endDate: dateRange.endDate.toISOString(),
+      }));
+    }
+  }, [dateRange, loading]);
+
+  // Save leaves to localStorage whenever they change
+  useEffect(() => {
+    if (!loading) {
+      saveLeaves(leaves);
+    }
+  }, [leaves, loading]);
 
   const addResource = useCallback((resource: Omit<Resource, 'id'>) => {
     const newResource: Resource = {
@@ -159,17 +221,202 @@ export const useResourceCalendar = () => {
     const testData = generateTestData();
     setResources(testData.resources);
     setProjects(testData.projects);
+    setHolidaySettings(prev => ({
+      ...prev,
+      holidays: testData.holidays,
+    }));
   }, []);
 
   const clearAllData = useCallback(() => {
     setResources([]);
     setProjects([]);
+    setHolidaySettings({
+      weekendDays: [5, 6],
+      holidays: [],
+      workingHours: {
+        start: '09:00',
+        end: '18:00',
+      },
+    });
   }, []);
+
+  // Holiday management functions
+  const addHoliday = useCallback((holiday: Omit<Holiday, 'id'>) => {
+    const newHoliday: Holiday = {
+      ...holiday,
+      id: Date.now().toString(),
+    };
+    setHolidaySettings(prev => ({
+      ...prev,
+      holidays: [...prev.holidays, newHoliday],
+    }));
+  }, []);
+
+  const updateHoliday = useCallback((id: string, updates: Partial<Holiday>) => {
+    setHolidaySettings(prev => ({
+      ...prev,
+      holidays: prev.holidays.map(holiday =>
+        holiday.id === id ? { ...holiday, ...updates } : holiday
+      ),
+    }));
+  }, []);
+
+  const deleteHoliday = useCallback((id: string) => {
+    setHolidaySettings(prev => ({
+      ...prev,
+      holidays: prev.holidays.filter(holiday => holiday.id !== id),
+    }));
+  }, []);
+
+  const updateWeekendDays = useCallback((weekendDays: number[]) => {
+    setHolidaySettings(prev => ({
+      ...prev,
+      weekendDays,
+    }));
+  }, []);
+
+  const updateWorkingHours = useCallback((workingHours: { start: string; end: string }) => {
+    setHolidaySettings(prev => ({
+      ...prev,
+      workingHours,
+    }));
+  }, []);
+
+  // Helper function to check if a date is a holiday
+  const isHoliday = useCallback((date: Date): Holiday | null => {
+    const dateStr = date.toISOString().split('T')[0];
+    const holiday = holidaySettings.holidays.find(h => {
+      if (h.recurring) {
+        // For recurring holidays, check month and day
+        const holidayDate = new Date(h.date);
+        return holidayDate.getMonth() === date.getMonth() && 
+               holidayDate.getDate() === date.getDate();
+      } else {
+        // For non-recurring holidays, check exact date
+        return h.date === dateStr;
+      }
+    });
+    return holiday || null;
+  }, [holidaySettings.holidays]);
+
+  // Helper function to check if a date is a weekend
+  const isWeekend = useCallback((date: Date): boolean => {
+    return holidaySettings.weekendDays.includes(date.getDay());
+  }, [holidaySettings.weekendDays]);
+
+  // Date range management
+  const updateDateRange = useCallback((startDate: Date, endDate: Date) => {
+    setDateRange({ startDate, endDate });
+  }, []);
+
+  const resetDateRange = useCallback(() => {
+    setDateRange(getDefaultDateRange());
+  }, []);
+
+  // Leave management functions
+  const addLeave = useCallback((leave: Omit<Leave, 'id'>) => {
+    const newLeave: Leave = {
+      ...leave,
+      id: Date.now().toString(),
+    };
+    setLeaves(prev => [...prev, newLeave]);
+  }, []);
+
+  const updateLeave = useCallback((id: string, updates: Partial<Leave>) => {
+    setLeaves(prev => prev.map(leave =>
+      leave.id === id ? { ...leave, ...updates } : leave
+    ));
+  }, []);
+
+  const deleteLeave = useCallback((id: string) => {
+    setLeaves(prev => prev.filter(leave => leave.id !== id));
+  }, []);
+
+  // Helper function to check if a date is a leave day
+  const isLeaveDay = useCallback((date: Date, resourceId: string): Leave | null => {
+    const dateStr = date.toISOString().split('T')[0];
+    const leave = leaves.find(l => 
+      l.resourceId === resourceId &&
+      l.startDate <= dateStr &&
+      l.endDate >= dateStr &&
+      l.status === 'approved'
+    );
+    return leave || null;
+  }, [leaves]);
+
+  // Calculate work day statistics for a resource
+  const getWorkDayStats = useCallback((resourceId: string): WorkDayStats => {
+    const startDate = dateRange.startDate;
+    const endDate = dateRange.endDate;
+    
+    // Calculate total work days (excluding weekends and holidays)
+    let totalWorkDays = 0;
+    const currentDate = new Date(startDate);
+    
+    while (currentDate <= endDate) {
+      if (!isWeekend(currentDate) && !isHoliday(currentDate)) {
+        totalWorkDays++;
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    // Calculate assigned project days
+    const resourceProjects = projects.filter(p => p.resourceId === resourceId);
+    let assignedProjectDays = 0;
+    
+    resourceProjects.forEach(project => {
+      const projectStart = new Date(project.startDate);
+      const projectEnd = new Date(project.endDate);
+      const rangeStart = new Date(Math.max(startDate.getTime(), projectStart.getTime()));
+      const rangeEnd = new Date(Math.min(endDate.getTime(), projectEnd.getTime()));
+      
+      const currentDate = new Date(rangeStart);
+      while (currentDate <= rangeEnd) {
+        if (!isWeekend(currentDate) && !isHoliday(currentDate)) {
+          assignedProjectDays++;
+        }
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    });
+    
+    // Calculate leave days
+    const resourceLeaves = leaves.filter(l => l.resourceId === resourceId && l.status === 'approved');
+    let leaveDays = 0;
+    
+    resourceLeaves.forEach(leave => {
+      const leaveStart = new Date(leave.startDate);
+      const leaveEnd = new Date(leave.endDate);
+      const rangeStart = new Date(Math.max(startDate.getTime(), leaveStart.getTime()));
+      const rangeEnd = new Date(Math.min(endDate.getTime(), leaveEnd.getTime()));
+      
+      const currentDate = new Date(rangeStart);
+      while (currentDate <= rangeEnd) {
+        if (!isWeekend(currentDate) && !isHoliday(currentDate)) {
+          leaveDays++;
+        }
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    });
+    
+    const availableDays = totalWorkDays - assignedProjectDays - leaveDays;
+    const utilization = totalWorkDays > 0 ? ((assignedProjectDays + leaveDays) / totalWorkDays) * 100 : 0;
+    
+    return {
+      totalWorkDays,
+      assignedProjectDays,
+      leaveDays,
+      availableDays,
+      utilization,
+    };
+  }, [projects, leaves, dateRange, isWeekend, isHoliday]);
 
   return {
     resources,
     projects,
+    leaves,
     loading,
+    holidaySettings,
+    dateRange,
     addResource,
     updateResource,
     deleteResource,
@@ -180,5 +427,19 @@ export const useResourceCalendar = () => {
     clearDayWork,
     loadTestData,
     clearAllData,
+    addHoliday,
+    updateHoliday,
+    deleteHoliday,
+    updateWeekendDays,
+    updateWorkingHours,
+    isHoliday,
+    isWeekend,
+    updateDateRange,
+    resetDateRange,
+    addLeave,
+    updateLeave,
+    deleteLeave,
+    isLeaveDay,
+    getWorkDayStats,
   };
 };

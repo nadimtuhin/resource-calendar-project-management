@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Project, Resource } from '../../types';
 import { X, Calendar, Trash2 } from 'lucide-react';
 import { formatDate } from '../../utils/dateUtils';
+import { MODAL_LEVELS } from '../../constants/zIndex';
 
 interface ProjectModalProps {
   isOpen: boolean;
@@ -27,6 +28,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const [title, setTitle] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [deadline, setDeadline] = useState('');
+  const [workDaysNeeded, setWorkDaysNeeded] = useState('');
   const [resourceId, setResourceId] = useState('');
   const [priority, setPriority] = useState<'high' | 'medium' | 'low'>('medium');
   const [showRemoveWork, setShowRemoveWork] = useState(false);
@@ -37,12 +40,16 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       setTitle(project.title);
       setStartDate(project.startDate);
       setEndDate(project.endDate);
+      setDeadline(project.deadline || '');
+      setWorkDaysNeeded(project.workDaysNeeded?.toString() || '');
       setResourceId(project.resourceId);
       setPriority(project.priority);
     } else {
       setTitle('');
       setStartDate(formatDate(new Date()));
       setEndDate(formatDate(new Date()));
+      setDeadline('');
+      setWorkDaysNeeded('');
       setResourceId(resources[0]?.id || '');
       setPriority('medium');
     }
@@ -66,22 +73,21 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (title.trim() && startDate && endDate && resourceId) {
+      const workDays = workDaysNeeded ? parseInt(workDaysNeeded) : undefined;
+      const projectData = {
+        title: title.trim(),
+        startDate,
+        endDate,
+        deadline: deadline || undefined,
+        workDaysNeeded: workDays,
+        resourceId,
+        priority,
+      };
+      
       if (project) {
-        onUpdate(project.id, {
-          title: title.trim(),
-          startDate,
-          endDate,
-          resourceId,
-          priority,
-        });
+        onUpdate(project.id, projectData);
       } else {
-        onSave({
-          title: title.trim(),
-          startDate,
-          endDate,
-          resourceId,
-          priority,
-        });
+        onSave(projectData);
       }
       onClose();
     }
@@ -130,7 +136,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const projectDates = getProjectDates();
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+      style={{ zIndex: MODAL_LEVELS.PROJECT }}
+    >
       <div className="bg-white rounded-lg p-6 w-96 max-w-90vw max-h-90vh overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">
@@ -183,6 +192,37 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Deadline <span className="text-gray-500 text-xs">(Optional)</span>
+              </label>
+              <input
+                type="date"
+                value={deadline}
+                onChange={(e) => setDeadline(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Hard deadline"
+              />
+              <p className="text-xs text-gray-500 mt-1">Hard deadline for project completion</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Work Days Needed <span className="text-gray-500 text-xs">(Optional)</span>
+              </label>
+              <input
+                type="number"
+                value={workDaysNeeded}
+                onChange={(e) => setWorkDaysNeeded(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="e.g., 5"
+                min="1"
+                max="365"
+              />
+              <p className="text-xs text-gray-500 mt-1">Total work days needed to complete</p>
             </div>
           </div>
 
