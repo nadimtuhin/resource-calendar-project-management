@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh repo edit:*)",
+      "Bash(gh repo view:*)",
+      "Bash(npm install)",
+      "Bash(npm run lint)",
+      "Bash(npm run build:*)"
+    ],
+    "deny": []
+  }
+}

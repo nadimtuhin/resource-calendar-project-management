@@ -2,6 +2,8 @@ import React from 'react';
 import { Resource, Project } from '../../types';
 import { DayCell } from './DayCell';
 import { Edit2, Trash2 } from 'lucide-react';
+import { ContiguousProjectBar } from './ContiguousProjectBar';
+import { groupContiguousProjects } from '../../utils/projectGrouping';
 
 interface ResourceRowProps {
   resource: Resource;
@@ -39,8 +41,11 @@ export const ResourceRow: React.FC<ResourceRowProps> = ({
     return name.length > maxLength ? name.substring(0, maxLength) + '...' : name;
   };
 
+  // Get contiguous project groups for this resource
+  const contiguousGroups = groupContiguousProjects(projects, dates, resource.id);
+
   return (
-    <div className="flex border-b border-gray-200 hover:bg-gray-50">
+    <div className="flex border-b border-gray-200 hover:bg-gray-50 relative">
       {/* Resource info column */}
       <div className="w-32 p-3 border-r border-gray-200 bg-white sticky left-0 z-10">
         <div className="flex items-center justify-between">
@@ -76,19 +81,34 @@ export const ResourceRow: React.FC<ResourceRowProps> = ({
       </div>
 
       {/* Timeline cells */}
-      <div className="flex">
+      <div className="flex relative">
         {dates.map((date, index) => (
           <DayCell
             key={index}
             date={date}
             projects={getProjectsForDate(date)}
             resource={resource}
-            onEditProject={onEditProject}
-            onDeleteProject={onDeleteProject}
             onClearDay={onClearDay}
             onShowOverflow={onShowOverflow}
           />
         ))}
+        
+        {/* Contiguous project bars overlay */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="relative h-full pointer-events-auto">
+            {contiguousGroups.map((group, index) => (
+              <ContiguousProjectBar
+                key={`${group.project.id}-${group.startIndex}-${index}`}
+                project={group.project}
+                resourceColor={resource.color}
+                startIndex={group.startIndex}
+                span={group.span}
+                onEdit={onEditProject}
+                onDelete={onDeleteProject}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
