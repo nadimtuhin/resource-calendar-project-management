@@ -173,7 +173,7 @@ We love contributions! Here's how you can help:
 
 ```bash
 # Fork and clone the repo
-git clone https://github.com/YOUR_USERNAME/resource-calendar-project-management.git
+git clone https://github.com/nadimtuhin/resource-calendar-project-management.git
 
 # Create a new branch
 git checkout -b feature/amazing-feature
