@@ -1,4 +1,4 @@
-# 📅 Resource Calendar - Visual Project Management Tool
+# 📅 Resource Calendar - Comprehensive Project Management System
 
 [![React](https://img.shields.io/badge/React-18.3-blue.svg)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue.svg)](https://www.typescriptlang.org/)
@@ -7,29 +7,41 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/nadimtuhin/resource-calendar-project-management/pulls)
 
-A modern, visual resource allocation and project management tool that helps teams track work across multiple resources on an intuitive calendar interface. No complex setup, no backend required - just pure productivity!
+A comprehensive resource calendar management system with project tracking, leave management, holiday configuration, and team analytics. Features Bengali localization and includes sample data with Pathao project templates for local businesses.
 
-## 🎥 Demo
+## 🎥 Live Demo
 
-Try it live: [https://resource-calendar-project-management.vercel.app](https://resource-calendar-project-management.vercel.app)
+Try it live: [https://resource-calendar-project-management-qz3pm227m.vercel.app](https://resource-calendar-project-management-qz3pm227m.vercel.app)
 
 ## ✨ Features
 
-### Core Functionality
-- **📊 Visual Resource Timeline** - Beautiful calendar view showing all team members and their allocated work
-- **👥 Smart Resource Management** - Create team members with custom roles, departments, and color coding
-- **📈 Real-time Utilization Analytics** - Visual indicators and percentage tracking for resource capacity
-- **🎯 Flexible Project Allocation** - Assign projects to specific days with hourly tracking
-- **🔍 Overflow Detection** - Automatic detection when resources exceed daily capacity
-- **📱 Fully Responsive** - Optimized for desktop, tablet, and mobile devices
+### 🎯 Core Functionality
+- **📊 Visual Resource Timeline** - Beautiful calendar view with contiguous project bars spanning multiple days
+- **👥 Smart Resource Management** - Team members with roles, departments, and color coding
+- **📈 Real-time Analytics** - Comprehensive project statistics and resource utilization tracking
+- **🎯 Project Status Tracking** - Complete project lifecycle management (planning, active, on-hold, completed, etc.)
+- **🔍 Advanced Overflow Detection** - Smart workload management with visual indicators
+- **📱 Fully Responsive** - Optimized for all device sizes
 
-### Additional Features
-- **💾 Automatic Saving** - All changes persist locally in your browser
-- **🎨 Modern UI/UX** - Clean, intuitive interface that users love
-- **⚡ Blazing Fast** - Instant updates with no server roundtrips
-- **🔒 Privacy First** - Your data never leaves your browser
-- **🎭 Test Data Generator** - Quick demo data for testing
-- **🌈 Custom Color Themes** - Personalize resources with colors
+### 🚀 Advanced Features
+- **🗓️ Holiday Management** - Configurable weekends (Friday-Saturday for Bangladesh) and holiday calendar
+- **🏖️ Leave Management** - Track employee leave days with timeline visualization
+- **📊 Project Analytics** - Deadline tracking, work days calculation, and project health indicators
+- **🔗 URL State Sharing** - Share calendar state via base64-encoded URLs
+- **📅 Date Range Selection** - Flexible timeline views with customizable date ranges
+- **🎨 Holiday Visualization** - Multi-layer holiday patterns within project bars
+
+### 🌍 Localization & Templates
+- **🇧🇩 Bengali Support** - Full Bengali names and localization
+- **🚗 Pathao Templates** - Pre-built project templates for ride-sharing and delivery businesses
+- **🎭 Smart Test Data** - Realistic sample data for quick exploration
+
+### 💻 Technical Features
+- **💾 Local Storage** - Automatic data persistence in browser
+- **🎨 Modern UI/UX** - Clean modal-based management interface
+- **⚡ Blazing Fast** - Instant updates with optimized performance
+- **🔒 Privacy First** - No server required, all data stays local
+- **🌈 Customizable** - Extensive color coding and visual customization
 
 ## 🚀 Quick Start
 
@@ -58,9 +70,8 @@ Visit `http://localhost:5173` to see the app in action!
 
 Deploy your own instance with one click:
 
-- [Deploy to Vercel](#)
-- [Deploy to Netlify](#)
-- [Deploy to GitHub Pages](#)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nadimtuhin/resource-calendar-project-management)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/nadimtuhin/resource-calendar-project-management)
 
 ## 🛠️ Tech Stack
 
@@ -75,56 +86,70 @@ Deploy your own instance with one click:
 
 ## 📖 How It Works
 
-### 1. Add Your Team Members
-Create resources (team members) with:
-- Name and role
-- Department/team
-- Custom color coding
-- Maximum daily hours
+### 1. Getting Started
+- **Fresh Start**: Add your first team member manually
+- **Quick Demo**: Load sample Bengali data with Pathao projects
+- Access **Management Center** for comprehensive control
 
-### 2. Create Projects
-Define projects with:
-- Project name and description
-- Color coding for visual distinction
-- Flexible duration
+### 2. Team & Resource Management
+- Create resources with Bengali names, roles, and departments
+- Set working hours and holiday preferences
+- Configure Friday-Saturday weekends (Bangladesh standard)
+- Track leave days and work availability
 
-### 3. Allocate Work
-- Click on any day in the calendar
-- Select resource and project
-- Set hours for that day
-- Visual indicators show utilization
+### 3. Project Lifecycle
+- Create projects with status tracking (planning → active → completed)
+- Set deadlines and estimated work days
+- Assign projects to team members with daily hour allocation
+- Monitor progress with real-time analytics
 
-### 4. Monitor & Adjust
-- See utilization percentages
-- Identify overallocated resources
-- Rebalance workload as needed
+### 4. Advanced Features
+- **Holiday Management**: Configure holidays and see them in timeline
+- **Leave Tracking**: Manage employee leave with work day calculations
+- **State Sharing**: Export/import calendar data via URL sharing
+- **Analytics**: Track project deadlines, work completion, and team utilization
+
+### 5. Timeline Visualization
+- See contiguous project bars spanning multiple days
+- Holiday patterns within project periods
+- Resource utilization indicators
+- Overflow detection for overallocated resources
 
 ## 💡 Use Cases
 
-### Software Development
-Track sprint work, bug fixes, and feature development across your engineering team.
+### 🇧🇩 Local Bangladesh Businesses
+- **Pathao/Uber Operations**: Track driver schedules, delivery assignments, and vehicle allocation
+- **Software Companies**: Manage development teams with Bengali localization
+- **Consulting Firms**: Handle client projects with local holiday calendar
 
-### Creative Agencies
-Manage designer and developer availability across multiple client projects.
+### 🏢 Enterprise Teams
+- **Software Development**: Sprint planning, bug tracking, and feature development
+- **Creative Agencies**: Designer and developer allocation across client projects
+- **Manufacturing**: Production scheduling with holiday and leave considerations
+- **Healthcare**: Staff scheduling with shift management and leave tracking
 
-### Consulting
-Visualize consultant allocation and ensure billable hours are maximized.
+### 🚀 Startups & SMEs
+- **Resource Planning**: Optimize small team allocation across multiple projects
+- **Client Work**: Track billable hours and project deadlines
+- **Remote Teams**: Coordinate across different time zones and holiday calendars
 
-### Project Management
-Get a bird's-eye view of all ongoing projects and resource allocation.
-
-### Freelancers
-Track your own time across multiple clients and projects.
+### 👨‍💼 Individual Use
+- **Freelancers**: Manage multiple client projects and availability
+- **Consultants**: Track engagement schedules and maximize billable time
+- **Project Managers**: Personal project tracking and timeline management
 
 ## 🎯 Why Resource Calendar?
 
 | Problem | Our Solution |
 |---------|--------------|
-| Can't see team capacity | Visual timeline shows everyone's workload |
-| Resource conflicts | Real-time utilization prevents double-booking |
-| Complex tools | Simple, intuitive interface |
-| Expensive software | 100% free and open source |
+| Can't see team capacity | Visual timeline with contiguous project bars |
+| Resource conflicts | Real-time utilization with overflow detection |
+| Complex project management | Simple, intuitive modal-based interface |
+| Expensive enterprise software | 100% free and open source |
 | Data privacy concerns | Everything stays in your browser |
+| Holiday/leave confusion | Built-in holiday calendar and leave management |
+| Local business needs | Bengali localization with Pathao templates |
+| State sharing difficulties | URL-based state sharing with base64 encoding |
 
 ## 📸 Screenshots
 
@@ -175,14 +200,29 @@ See our [Contributing Guide](CONTRIBUTING.md) for more details.
 
 ## 📋 Roadmap
 
+### 🎯 Completed Features
+- [x] Contiguous project bars spanning multiple days
+- [x] Holiday management with Friday-Saturday weekends
+- [x] Leave management with work day calculations
+- [x] Project status tracking and analytics
+- [x] URL state sharing with base64 encoding
+- [x] Bengali localization with Pathao templates
+- [x] Modal-based management interface
+- [x] Enhanced empty state with test data prompt
+
+### 🚀 Upcoming Features
+- [ ] Project timeline visualization with milestones
+- [ ] Project health indicators and risk assessment
+- [ ] Project-specific analytics dashboard
 - [ ] Drag and drop project allocation
-- [ ] Export to CSV/Excel
+- [ ] Export to CSV/Excel with Bengali support
 - [ ] Team collaboration features
 - [ ] Calendar sync (Google, Outlook)
 - [ ] Mobile app (React Native)
-- [ ] API for integrations
-- [ ] Dark mode
-- [ ] Custom reporting
+- [ ] Dark mode with theme switching
+- [ ] Custom reporting and dashboards
+- [ ] API for third-party integrations
+- [ ] Multi-language support beyond Bengali
 
 ## 🐛 Known Issues
 
