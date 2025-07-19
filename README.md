@@ -11,7 +11,7 @@ A comprehensive resource calendar management system with project tracking, leave
 
 ## 🎥 Live Demo
 
-Try it live: [https://resource-calendar-project-management-qz3pm227m.vercel.app](https://resource-calendar-project-management-qz3pm227m.vercel.app)
+Try it live: [https://resource-calendar-project-management.vercel.app](https://resource-calendar-project-management.vercel.app)
 
 ## ✨ Features
 
@@ -153,17 +153,35 @@ Deploy your own instance with one click:
 
 ## 📸 Screenshots
 
-### Main Dashboard
-*Visual timeline showing resource allocation across the team*
+### Main Dashboard - Empty State
+Get started with sample data or create your own resources.
 
-### Resource Management
-*Easy resource creation and editing*
+![Empty State](screenshots/empty-state.jpg)
 
-### Project Allocation
-*Simple project assignment interface*
+### Full Application View
+Complete resource calendar with contiguous project bars and analytics.
 
-### Analytics View
-*Resource utilization insights at a glance*
+![Full Application](screenshots/full-page.jpg)
+
+### Header Navigation
+Streamlined navigation with action groups and management center.
+
+![Header Navigation](screenshots/header.jpg)
+
+### Main Content Area
+Resource timeline with holiday visualization and project tracking.
+
+![Main Content](screenshots/main-content.jpg)
+
+### Mobile Responsive Design
+Optimized for mobile devices with touch-friendly interface.
+
+![Mobile View](screenshots/mobile-view.jpg)
+
+### Tablet View
+Perfect for mid-size devices with balanced layout.
+
+![Tablet View](screenshots/tablet-view.jpg)
 
 ## 🤝 Contributing
 

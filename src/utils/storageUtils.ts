@@ -55,4 +55,6 @@ export const clearAllData = (): void => {
   localStorage.removeItem(STORAGE_KEYS.PROJECTS);
   localStorage.removeItem(STORAGE_KEYS.HOLIDAY_SETTINGS);
   localStorage.removeItem(STORAGE_KEYS.LEAVES);
+  localStorage.removeItem('resource-calendar-date-range');
+  localStorage.removeItem('management-panel-state');
 };

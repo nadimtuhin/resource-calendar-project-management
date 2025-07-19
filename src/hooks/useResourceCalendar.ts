@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Resource, Project, Holiday, HolidaySettings, Leave, WorkDayStats } from '../types';
-import { saveResources, loadResources, saveProjects, loadProjects, saveHolidaySettings, loadHolidaySettings, saveLeaves, loadLeaves } from '../utils/storageUtils';
+import { saveResources, loadResources, saveProjects, loadProjects, saveHolidaySettings, loadHolidaySettings, saveLeaves, loadLeaves, clearAllData as clearStorageData } from '../utils/storageUtils';
 import { generateTestData } from '../utils/testData';
 
 // Helper function to get default date range
@@ -230,6 +230,7 @@ export const useResourceCalendar = () => {
   const clearAllData = useCallback(() => {
     setResources([]);
     setProjects([]);
+    setLeaves([]);
     setHolidaySettings({
       weekendDays: [5, 6],
       holidays: [],
@@ -238,6 +239,8 @@ export const useResourceCalendar = () => {
         end: '18:00',
       },
     });
+    setDateRange(getDefaultDateRange());
+    clearStorageData();
   }, []);
 
   // Holiday management functions

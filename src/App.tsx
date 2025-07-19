@@ -34,6 +34,7 @@ function App() {
     removeProjectFromDays,
     clearDayWork,
     loadTestData,
+    clearAllData,
     addHoliday,
     updateHoliday,
     deleteHoliday,
@@ -160,6 +161,16 @@ function App() {
     setImportModalOpen(true);
   };
 
+  const handleResetData = () => {
+    const confirmed = confirm(
+      'Are you sure you want to reset all data?\n\nThis will permanently delete:\n• All resources\n• All projects\n• All holidays\n• All leave records\n• Date range settings\n\nThis action cannot be undone.'
+    );
+    
+    if (confirmed) {
+      clearAllData();
+    }
+  };
+
   const handleOpenManagement = () => {
     setManagementModalOpen(true);
   };
@@ -234,6 +245,7 @@ function App() {
         onAddResource={handleAddResource}
         onAddProject={handleAddProject}
         onLoadTestData={loadTestData}
+        onResetData={handleResetData}
         onShare={handleShare}
         onImport={handleImport}
         dateRange={dateRange}

@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, Users, Plus, Upload, Share2, Download, CalendarDays, Settings, ChevronDown, MoreHorizontal, BarChart3 } from 'lucide-react';
+import { Calendar, Users, Plus, Upload, Share2, Download, CalendarDays, Settings, ChevronDown, MoreHorizontal, BarChart3, RotateCcw } from 'lucide-react';
 import { DateRangeSelector } from '../DatePicker/DateRangeSelector';
 
 interface HeaderProps {
   onAddResource: () => void;
   onAddProject: () => void;
   onLoadTestData: () => void;
+  onResetData: () => void;
   onShare: () => void;
   onImport: () => void;
   dateRange: { startDate: Date; endDate: Date };
@@ -17,6 +18,7 @@ export const Header: React.FC<HeaderProps> = ({
   onAddResource,
   onAddProject,
   onLoadTestData,
+  onResetData,
   onShare,
   onImport,
   dateRange,
@@ -116,6 +118,13 @@ export const Header: React.FC<HeaderProps> = ({
                       <span>Share Calendar</span>
                     </button>
                     <div className="border-t border-gray-100"></div>
+                    <button
+                      onClick={() => handleManagementAction(onResetData)}
+                      className="flex items-center space-x-3 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <RotateCcw size={16} />
+                      <span>Reset All Data</span>
+                    </button>
                     <button
                       onClick={() => handleManagementAction(onOpenManagement)}
                       className="flex items-center space-x-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
