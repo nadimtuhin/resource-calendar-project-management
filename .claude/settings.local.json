@@ -15,7 +15,9 @@
       "Bash(npx playwright:*)",
       "Bash(mkdir:*)",
       "Bash(ls:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "WebFetch(domain:localhost)",
+      "Bash(docker compose run:*)"
     ],
     "deny": []
   }

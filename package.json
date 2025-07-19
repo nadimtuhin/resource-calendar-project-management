@@ -8,7 +8,14 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "screenshots": "node scripts/simple-screenshots.js"
+    "screenshots": "node scripts/simple-screenshots.js",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "docker:build": "docker compose build",
+    "docker:dev": "docker compose up app",
+    "docker:test": "docker compose run test",
+    "docker:down": "docker compose down"
   },
   "dependencies": {
     "lucide-react": "^0.344.0",

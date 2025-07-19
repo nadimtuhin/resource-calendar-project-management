@@ -1,9 +1,71 @@
 import { Resource, Project, Holiday, ProjectStatus } from '../types';
 import { RESOURCE_COLORS } from '../constants/colors';
-import { formatDate, addDays } from './dateUtils';
+import { 
+  formatDate, 
+  addDays, 
+  getTestDateRanges, 
+  getRandomDateInRange, 
+  addWorkDays, 
+  getWorkDaysCount,
+  generateDynamicHolidayDates,
+  addMonths 
+} from './dateUtils';
+
+/**
+ * Generate project with realistic work day calculations
+ */
+const generateProject = (
+  id: string,
+  title: string,
+  description: string,
+  resourceId: string,
+  startDate: Date,
+  duration: number,
+  priority: 'low' | 'medium' | 'high',
+  status: ProjectStatus,
+  progress: number = 0
+): Project => {
+  const endDate = addWorkDays(startDate, duration);
+  const deadline = addDays(endDate, Math.floor(Math.random() * 7) + 1); // 1-7 days after end
+  const workDaysNeeded = getWorkDaysCount(startDate, endDate);
+  const estimatedHours = workDaysNeeded * 8; // 8 hours per work day
+  const actualHours = Math.floor(estimatedHours * (progress / 100));
+  
+  // Calculate health score based on progress and timeline
+  let healthScore = 90;
+  if (status === 'at-risk') healthScore = Math.floor(Math.random() * 30) + 20; // 20-50
+  else if (status === 'overdue') healthScore = Math.floor(Math.random() * 40) + 10; // 10-50
+  else if (status === 'on-hold') healthScore = Math.floor(Math.random() * 30) + 60; // 60-90
+  else if (status === 'completed') healthScore = Math.floor(Math.random() * 20) + 80; // 80-100
+  else healthScore = Math.floor(Math.random() * 30) + 70; // 70-100
+  
+  const project: Project = {
+    id,
+    title,
+    description,
+    startDate: formatDate(startDate),
+    endDate: formatDate(endDate),
+    deadline: formatDate(deadline),
+    workDaysNeeded,
+    resourceId,
+    priority,
+    status,
+    progress,
+    estimatedHours,
+    actualHours,
+    healthScore,
+  };
+  
+  if (status === 'completed') {
+    project.completedDate = formatDate(addDays(endDate, -Math.floor(Math.random() * 5)));
+  }
+  
+  return project;
+};
 
 export const generateTestData = (): { resources: Resource[]; projects: Project[]; holidays: Holiday[] } => {
   const today = new Date();
+  const dateRanges = getTestDateRanges();
   
   const resources: Resource[] = [
     {
@@ -11,322 +73,281 @@ export const generateTestData = (): { resources: Resource[]; projects: Project[]
       name: 'রাফিন আহমেদ',
       role: 'Frontend Developer',
       color: RESOURCE_COLORS[0],
+      department: 'Engineering',
     },
     {
       id: '2',
       name: 'তানভীর হাসান',
       role: 'Backend Developer',
       color: RESOURCE_COLORS[1],
+      department: 'Engineering',
     },
     {
       id: '3',
       name: 'সাদিয়া খাতুন',
       role: 'UI/UX Designer',
       color: RESOURCE_COLORS[2],
+      department: 'Design',
     },
     {
       id: '4',
       name: 'ইমরান হোসেন',
       role: 'QA Engineer',
       color: RESOURCE_COLORS[3],
+      department: 'Quality Assurance',
     },
     {
       id: '5',
       name: 'নাফিসা আক্তার',
       role: 'DevOps Engineer',
       color: RESOURCE_COLORS[4],
+      department: 'Infrastructure',
     },
     {
       id: '6',
       name: 'আরিফ রহমান',
       role: 'Product Manager',
       color: RESOURCE_COLORS[5],
+      department: 'Product',
     },
   ];
 
-  const projects: Project[] = [
-    // রাফিন আহমেদ projects
-    {
-      id: 'p1',
-      title: 'Pathao Rider App UI',
-      description: 'Redesigning the rider mobile application interface',
-      startDate: formatDate(addDays(today, -15)),
-      endDate: formatDate(addDays(today, 5)),
-      deadline: formatDate(addDays(today, 7)),
-      workDaysNeeded: 15,
-      resourceId: '1',
-      priority: 'high',
-      status: 'active',
-      progress: 75,
-      estimatedHours: 120,
-      actualHours: 90,
-      healthScore: 85,
-    },
-    {
-      id: 'p2',
-      title: 'Pathao Food Web',
-      description: 'Building responsive web application for food delivery',
-      startDate: formatDate(addDays(today, 8)),
-      endDate: formatDate(addDays(today, 25)),
-      deadline: formatDate(addDays(today, 30)),
-      workDaysNeeded: 12,
-      resourceId: '1',
-      priority: 'medium',
-      status: 'planning',
-      progress: 10,
-      estimatedHours: 80,
-      actualHours: 8,
-      healthScore: 92,
-    },
-    {
-      id: 'p3',
-      title: 'Pathao Design System',
-      description: 'Creating unified design system for all Pathao products',
-      startDate: formatDate(addDays(today, 30)),
-      endDate: formatDate(addDays(today, 45)),
-      deadline: formatDate(addDays(today, 50)),
-      workDaysNeeded: 10,
-      resourceId: '1',
-      priority: 'low',
-      status: 'planning',
-      progress: 0,
-      estimatedHours: 60,
-      actualHours: 0,
-      healthScore: 95,
-    },
+  // Generate dynamic projects spanning previous, current, and next month
+  const projects: Project[] = [];
+  
+  // Projects from previous month (completed and ongoing)
+  projects.push(
+    // Completed projects from previous month
+    generateProject(
+      'p1',
+      'Pathao Brand Guidelines',
+      'Establishing comprehensive brand guidelines and design standards',
+      '3',
+      getRandomDateInRange(dateRanges.prevMonth.start, addDays(dateRanges.prevMonth.end, -10)),
+      10,
+      'medium',
+      'completed',
+      100
+    ),
+    generateProject(
+      'p2',
+      'Pathao Legacy Code Cleanup',
+      'Refactoring and cleaning up legacy codebase',
+      '2',
+      getRandomDateInRange(dateRanges.prevMonth.start, addDays(dateRanges.prevMonth.end, -15)),
+      8,
+      'low',
+      'completed',
+      100
+    ),
     
-    // তানভীর হাসান projects
-    {
-      id: 'p4',
-      title: 'Pathao API Gateway',
-      description: 'Implementing microservices API gateway architecture',
-      startDate: formatDate(addDays(today, -10)),
-      endDate: formatDate(addDays(today, 10)),
-      deadline: formatDate(addDays(today, 5)),
-      workDaysNeeded: 20,
-      resourceId: '2',
-      priority: 'high',
-      status: 'at-risk',
-      progress: 60,
-      estimatedHours: 100,
-      actualHours: 85,
-      healthScore: 45,
-    },
-    {
-      id: 'p5',
-      title: 'Pathao User DB Migration',
-      description: 'Migrating user database to new infrastructure',
-      startDate: formatDate(addDays(today, 12)),
-      endDate: formatDate(addDays(today, 20)),
-      deadline: formatDate(addDays(today, 22)),
-      workDaysNeeded: 6,
-      resourceId: '2',
-      priority: 'high',
-      status: 'planning',
-      progress: 5,
-      estimatedHours: 150,
-      actualHours: 7,
-      healthScore: 88,
-    },
-    {
-      id: 'p6',
-      title: 'Pathao Backend Optimization',
-      description: 'Performance optimization of backend services',
-      startDate: formatDate(addDays(today, 25)),
-      endDate: formatDate(addDays(today, 40)),
-      resourceId: '2',
-      priority: 'medium',
-      status: 'planning',
-      progress: 0,
-      estimatedHours: 90,
-      actualHours: 0,
-      healthScore: 90,
-    },
-    
-    // সাদিয়া খাতুন projects
-    {
-      id: 'p7',
-      title: 'Pathao Brand Guidelines',
-      description: 'Establishing comprehensive brand guidelines and design standards',
-      startDate: formatDate(addDays(today, -20)),
-      endDate: formatDate(addDays(today, -5)),
-      resourceId: '3',
-      priority: 'medium',
-      status: 'completed',
-      progress: 100,
-      estimatedHours: 40,
-      actualHours: 38,
-      healthScore: 100,
-      completedDate: formatDate(addDays(today, -5)),
-    },
-    {
-      id: 'p8',
-      title: 'Pathao Customer Research',
-      description: 'Conducting user research and customer journey mapping',
-      startDate: formatDate(addDays(today, -2)),
-      endDate: formatDate(addDays(today, 12)),
-      resourceId: '3',
-      priority: 'high',
-      status: 'active',
-      progress: 45,
-      estimatedHours: 55,
-      actualHours: 25,
-      healthScore: 78,
-    },
-    {
-      id: 'p9',
-      title: 'Pathao Courier Prototype',
-      description: 'Creating interactive prototypes for courier service',
-      startDate: formatDate(addDays(today, 15)),
-      endDate: formatDate(addDays(today, 35)),
-      resourceId: '3',
-      priority: 'medium',
-      status: 'planning',
-      progress: 0,
-      estimatedHours: 65,
-      actualHours: 0,
-      healthScore: 92,
-    },
-    
-    // ইমরান হোসেন projects
-    {
-      id: 'p10',
-      title: 'Pathao App Testing',
-      description: 'Comprehensive testing of mobile and web applications',
-      startDate: formatDate(addDays(today, -5)),
-      endDate: formatDate(addDays(today, 15)),
-      resourceId: '4',
-      priority: 'high',
-      status: 'active',
-      progress: 70,
-      estimatedHours: 80,
-      actualHours: 56,
-      healthScore: 82,
-    },
-    {
-      id: 'p11',
-      title: 'Pathao Load Testing',
-      description: 'Performance and load testing for peak traffic scenarios',
-      startDate: formatDate(addDays(today, 18)),
-      endDate: formatDate(addDays(today, 28)),
-      resourceId: '4',
-      priority: 'medium',
-      status: 'planning',
-      progress: 0,
-      estimatedHours: 50,
-      actualHours: 0,
-      healthScore: 85,
-    },
-    {
-      id: 'p12',
-      title: 'Pathao Security Audit',
-      description: 'Security vulnerability assessment and penetration testing',
-      startDate: formatDate(addDays(today, 32)),
-      endDate: formatDate(addDays(today, 50)),
-      resourceId: '4',
-      priority: 'high',
-      status: 'planning',
-      progress: 0,
-      estimatedHours: 120,
-      actualHours: 0,
-      healthScore: 90,
-    },
-    
-    // নাফিসা আক্তার projects
-    {
-      id: 'p13',
-      title: 'Pathao CI/CD Setup',
-      description: 'Setting up continuous integration and deployment pipelines',
-      startDate: formatDate(addDays(today, -12)),
-      endDate: formatDate(addDays(today, 8)),
-      resourceId: '5',
-      priority: 'high',
-      status: 'active',
-      progress: 85,
-      estimatedHours: 60,
-      actualHours: 51,
-      healthScore: 88,
-    },
-    {
-      id: 'p14',
-      title: 'Pathao Cloud Infrastructure',
-      description: 'Migrating and optimizing cloud infrastructure',
-      startDate: formatDate(addDays(today, 10)),
-      endDate: formatDate(addDays(today, 22)),
-      resourceId: '5',
-      priority: 'medium',
-      status: 'planning',
-      progress: 0,
-      estimatedHours: 100,
-      actualHours: 0,
-      healthScore: 92,
-    },
-    {
-      id: 'p15',
-      title: 'Pathao Monitoring System',
-      description: 'Implementing comprehensive monitoring and alerting system',
-      startDate: formatDate(addDays(today, 25)),
-      endDate: formatDate(addDays(today, 42)),
-      resourceId: '5',
-      priority: 'low',
-      status: 'planning',
-      progress: 0,
-      estimatedHours: 70,
-      actualHours: 0,
-      healthScore: 95,
-    },
-    
-    // আরিফ রহমান projects
-    {
-      id: 'p16',
-      title: 'Pathao Expansion Strategy',
-      description: 'Strategic planning for market expansion and growth',
-      startDate: formatDate(addDays(today, -8)),
-      endDate: formatDate(addDays(today, 7)),
-      resourceId: '6',
-      priority: 'high',
-      status: 'overdue',
-      progress: 50,
-      estimatedHours: 40,
-      actualHours: 32,
-      healthScore: 25,
-    },
-    {
-      id: 'p17',
-      title: 'Pathao Market Analysis',
-      description: 'Comprehensive market research and competitor analysis',
-      startDate: formatDate(addDays(today, 10)),
-      endDate: formatDate(addDays(today, 25)),
-      resourceId: '6',
-      priority: 'medium',
-      status: 'planning',
-      progress: 0,
-      estimatedHours: 50,
-      actualHours: 0,
-      healthScore: 80,
-    },
-    {
-      id: 'p18',
-      title: 'Pathao 2025 Roadmap',
-      description: 'Long-term strategic roadmap and vision planning',
-      startDate: formatDate(addDays(today, 28)),
-      endDate: formatDate(addDays(today, 45)),
-      resourceId: '6',
-      priority: 'low',
-      status: 'on-hold',
-      progress: 0,
-      estimatedHours: 60,
-      actualHours: 0,
-      healthScore: 70,
-    },
-  ];
+    // Projects started in previous month, continuing to current month
+    generateProject(
+      'p3',
+      'Pathao Rider App UI',
+      'Redesigning the rider mobile application interface',
+      '1',
+      getRandomDateInRange(dateRanges.prevMonth.start, addDays(dateRanges.prevMonth.end, -20)),
+      25,
+      'high',
+      'active',
+      75
+    ),
+    generateProject(
+      'p4',
+      'Pathao API Gateway',
+      'Implementing microservices API gateway architecture',
+      '2',
+      getRandomDateInRange(dateRanges.prevMonth.start, addDays(dateRanges.prevMonth.end, -15)),
+      30,
+      'high',
+      'at-risk',
+      60
+    ),
+    generateProject(
+      'p5',
+      'Pathao CI/CD Setup',
+      'Setting up continuous integration and deployment pipelines',
+      '5',
+      getRandomDateInRange(dateRanges.prevMonth.start, addDays(dateRanges.prevMonth.end, -12)),
+      20,
+      'high',
+      'active',
+      85
+    )
+  );
+  
+  // Projects starting in current month
+  projects.push(
+    generateProject(
+      'p6',
+      'Pathao Customer Research',
+      'Conducting user research and customer journey mapping',
+      '3',
+      getRandomDateInRange(dateRanges.currentMonth.start, addDays(dateRanges.currentMonth.start, 5)),
+      15,
+      'high',
+      'active',
+      45
+    ),
+    generateProject(
+      'p7',
+      'Pathao App Testing',
+      'Comprehensive testing of mobile and web applications',
+      '4',
+      getRandomDateInRange(dateRanges.currentMonth.start, addDays(dateRanges.currentMonth.start, 7)),
+      18,
+      'high',
+      'active',
+      70
+    ),
+    generateProject(
+      'p8',
+      'Pathao Expansion Strategy',
+      'Strategic planning for market expansion and growth',
+      '6',
+      getRandomDateInRange(dateRanges.currentMonth.start, addDays(dateRanges.currentMonth.start, 3)),
+      12,
+      'high',
+      'overdue',
+      50
+    ),
+    generateProject(
+      'p9',
+      'Pathao Food Web',
+      'Building responsive web application for food delivery',
+      '1',
+      getRandomDateInRange(addDays(dateRanges.currentMonth.start, 10), addDays(dateRanges.currentMonth.start, 15)),
+      12,
+      'medium',
+      'planning',
+      10
+    ),
+    generateProject(
+      'p10',
+      'Pathao User DB Migration',
+      'Migrating user database to new infrastructure',
+      '2',
+      getRandomDateInRange(addDays(dateRanges.currentMonth.start, 12), addDays(dateRanges.currentMonth.start, 18)),
+      8,
+      'high',
+      'planning',
+      5
+    )
+  );
+  
+  // Projects starting in next month
+  projects.push(
+    generateProject(
+      'p11',
+      'Pathao Design System',
+      'Creating unified design system for all Pathao products',
+      '1',
+      getRandomDateInRange(dateRanges.nextMonth.start, addDays(dateRanges.nextMonth.start, 10)),
+      15,
+      'low',
+      'planning',
+      0
+    ),
+    generateProject(
+      'p12',
+      'Pathao Backend Optimization',
+      'Performance optimization of backend services',
+      '2',
+      getRandomDateInRange(dateRanges.nextMonth.start, addDays(dateRanges.nextMonth.start, 5)),
+      20,
+      'medium',
+      'planning',
+      0
+    ),
+    generateProject(
+      'p13',
+      'Pathao Courier Prototype',
+      'Creating interactive prototypes for courier service',
+      '3',
+      getRandomDateInRange(addDays(dateRanges.nextMonth.start, 8), addDays(dateRanges.nextMonth.start, 15)),
+      12,
+      'medium',
+      'planning',
+      0
+    ),
+    generateProject(
+      'p14',
+      'Pathao Load Testing',
+      'Performance and load testing for peak traffic scenarios',
+      '4',
+      getRandomDateInRange(addDays(dateRanges.nextMonth.start, 10), addDays(dateRanges.nextMonth.start, 18)),
+      10,
+      'medium',
+      'planning',
+      0
+    ),
+    generateProject(
+      'p15',
+      'Pathao Cloud Infrastructure',
+      'Migrating and optimizing cloud infrastructure',
+      '5',
+      getRandomDateInRange(addDays(dateRanges.nextMonth.start, 5), addDays(dateRanges.nextMonth.start, 12)),
+      15,
+      'medium',
+      'planning',
+      0
+    ),
+    generateProject(
+      'p16',
+      'Pathao Security Audit',
+      'Security vulnerability assessment and penetration testing',
+      '4',
+      getRandomDateInRange(addDays(dateRanges.nextMonth.start, 15), addDays(dateRanges.nextMonth.start, 22)),
+      18,
+      'high',
+      'planning',
+      0
+    ),
+    generateProject(
+      'p17',
+      'Pathao Market Analysis',
+      'Comprehensive market research and competitor analysis',
+      '6',
+      getRandomDateInRange(addDays(dateRanges.nextMonth.start, 8), addDays(dateRanges.nextMonth.start, 15)),
+      10,
+      'medium',
+      'planning',
+      0
+    ),
+    generateProject(
+      'p18',
+      'Pathao Monitoring System',
+      'Implementing comprehensive monitoring and alerting system',
+      '5',
+      getRandomDateInRange(addDays(dateRanges.nextMonth.start, 20), addDays(dateRanges.nextMonth.end, -5)),
+      12,
+      'low',
+      'planning',
+      0
+    ),
+    generateProject(
+      'p19',
+      'Pathao 2025 Roadmap',
+      'Long-term strategic roadmap and vision planning',
+      '6',
+      getRandomDateInRange(addDays(dateRanges.nextMonth.start, 25), dateRanges.nextMonth.end),
+      8,
+      'low',
+      'on-hold',
+      0
+    )
+  );
 
-  // Sample Bangladesh holidays
+  // Generate dynamic holidays for current year
+  const currentYear = today.getFullYear();
+  const dynamicHolidayDates = generateDynamicHolidayDates(currentYear);
+  
   const holidays: Holiday[] = [
     {
       id: 'h1',
       name: 'শহীদ দিবস ও আন্তর্জাতিক মাতৃভাষা দিবস',
-      date: '2024-02-21',
+      date: dynamicHolidayDates.languageDay,
       type: 'national',
       recurring: true,
       description: 'International Mother Language Day',
@@ -334,7 +355,7 @@ export const generateTestData = (): { resources: Resource[]; projects: Project[]
     {
       id: 'h2',
       name: 'স্বাধীনতা দিবস',
-      date: '2024-03-26',
+      date: dynamicHolidayDates.independenceDay,
       type: 'national',
       recurring: true,
       description: 'Independence Day of Bangladesh',
@@ -342,7 +363,7 @@ export const generateTestData = (): { resources: Resource[]; projects: Project[]
     {
       id: 'h3',
       name: 'বাংলা নববর্ষ',
-      date: '2024-04-14',
+      date: dynamicHolidayDates.bengaliNewYear,
       type: 'national',
       recurring: true,
       description: 'Bengali New Year',
@@ -350,7 +371,7 @@ export const generateTestData = (): { resources: Resource[]; projects: Project[]
     {
       id: 'h4',
       name: 'মে দিবস',
-      date: '2024-05-01',
+      date: dynamicHolidayDates.labourDay,
       type: 'national',
       recurring: true,
       description: 'International Labour Day',
@@ -358,7 +379,7 @@ export const generateTestData = (): { resources: Resource[]; projects: Project[]
     {
       id: 'h5',
       name: 'বিজয় দিবস',
-      date: '2024-12-16',
+      date: dynamicHolidayDates.victoryDay,
       type: 'national',
       recurring: true,
       description: 'Victory Day of Bangladesh',
@@ -366,7 +387,7 @@ export const generateTestData = (): { resources: Resource[]; projects: Project[]
     {
       id: 'h6',
       name: 'ঈদুল ফিতর',
-      date: formatDate(addDays(today, 30)), // Example future date
+      date: dynamicHolidayDates.eidFitr,
       type: 'religious',
       recurring: false,
       description: 'Festival of Breaking the Fast',
@@ -374,12 +395,118 @@ export const generateTestData = (): { resources: Resource[]; projects: Project[]
     {
       id: 'h7',
       name: 'ঈদুল আযহা',
-      date: formatDate(addDays(today, 90)), // Example future date
+      date: dynamicHolidayDates.eidAdha,
       type: 'religious',
       recurring: false,
       description: 'Festival of Sacrifice',
     },
+    // Add holidays that might fall within our test date range
+    {
+      id: 'h8',
+      name: 'Team Building Day',
+      date: formatDate(getRandomDateInRange(dateRanges.currentMonth.start, dateRanges.currentMonth.end)),
+      type: 'company',
+      recurring: false,
+      description: 'Pathao team building and activities day',
+    },
+    {
+      id: 'h9',
+      name: 'System Maintenance Day',
+      date: formatDate(getRandomDateInRange(dateRanges.nextMonth.start, addDays(dateRanges.nextMonth.start, 15))),
+      type: 'company',
+      recurring: false,
+      description: 'Scheduled system maintenance and upgrades',
+    },
   ];
 
   return { resources, projects, holidays };
+};
+
+/**
+ * Generate sample leave data spanning multiple months
+ */
+export const generateLeaveData = () => {
+  const dateRanges = getTestDateRanges();
+  const leave = [];
+  
+  // Previous month leave
+  leave.push({
+    id: 'l1',
+    resourceId: '3',
+    type: 'vacation',
+    startDate: formatDate(getRandomDateInRange(dateRanges.prevMonth.start, addDays(dateRanges.prevMonth.end, -10))),
+    endDate: formatDate(getRandomDateInRange(addDays(dateRanges.prevMonth.start, 10), addDays(dateRanges.prevMonth.end, -5))),
+    reason: 'Annual vacation',
+    approved: true,
+  });
+  
+  // Current month leave
+  leave.push({
+    id: 'l2',
+    resourceId: '1',
+    type: 'sick',
+    startDate: formatDate(getRandomDateInRange(dateRanges.currentMonth.start, addDays(dateRanges.currentMonth.start, 10))),
+    endDate: formatDate(getRandomDateInRange(addDays(dateRanges.currentMonth.start, 12), addDays(dateRanges.currentMonth.start, 15))),
+    reason: 'Medical leave',
+    approved: true,
+  });
+  
+  // Next month leave
+  leave.push({
+    id: 'l3',
+    resourceId: '5',
+    type: 'personal',
+    startDate: formatDate(getRandomDateInRange(addDays(dateRanges.nextMonth.start, 10), addDays(dateRanges.nextMonth.start, 15))),
+    endDate: formatDate(getRandomDateInRange(addDays(dateRanges.nextMonth.start, 17), addDays(dateRanges.nextMonth.start, 22))),
+    reason: 'Family event',
+    approved: false,
+  });
+  
+  return leave;
+};
+
+/**
+ * Generate realistic project assignments with varying hours per day
+ */
+export const generateProjectAssignments = (projects: Project[]) => {
+  const assignments = [];
+  
+  projects.forEach(project => {
+    // Primary assignment - resource working on the project
+    assignments.push({
+      id: `a-${project.id}-1`,
+      projectId: project.id,
+      resourceId: project.resourceId,
+      hoursPerDay: Math.floor(Math.random() * 4) + 4, // 4-8 hours
+      startDate: project.startDate,
+      endDate: project.endDate,
+    });
+    
+    // Some projects have secondary assignments (reviews, collaboration)
+    if (['p3', 'p4', 'p6', 'p8', 'p16'].includes(project.id)) {
+      const collaboratorId = project.resourceId === '1' ? '2' : '1'; // Frontend/Backend collaboration
+      assignments.push({
+        id: `a-${project.id}-2`,
+        projectId: project.id,
+        resourceId: collaboratorId,
+        hoursPerDay: Math.floor(Math.random() * 2) + 1, // 1-3 hours (support)
+        startDate: project.startDate,
+        endDate: project.endDate,
+      });
+    }
+    
+    // QA assignments for active projects
+    if (['p3', 'p4', 'p6', 'p7'].includes(project.id)) {
+      assignments.push({
+        id: `a-${project.id}-qa`,
+        projectId: project.id,
+        resourceId: '4', // QA Engineer
+        hoursPerDay: Math.floor(Math.random() * 3) + 2, // 2-4 hours
+        startDate: formatDate(addDays(new Date(project.startDate), Math.floor(Math.random() * 5))),
+        endDate: project.endDate,
+      });
+    }
+  });
+  
+  return assignments;
 };

@@ -1,0 +1,145 @@
+# Page snapshot
+
+```yaml
+- banner:
+  - img
+  - heading "Resource Calendar" [level=1]
+  - text: Advanced Project Management Tool
+  - button "Jun 2025 - Oct 2025":
+    - img
+    - text: Jun 2025 - Oct 2025
+  - button "Actions":
+    - img
+    - text: Actions
+    - img
+  - button "Management Center":
+    - img
+    - text: Management Center
+  - button "Add Resource":
+    - img
+    - text: Add Resource
+  - button "Add Project":
+    - img
+    - text: Add Project
+- main:
+  - img
+  - text: 6 Total Resources
+  - img
+  - text: 19 Active Projects
+  - img
+  - text: 8 High Priority
+  - img
+  - text: 350 Available Days
+  - img
+  - text: 642 Total Work Days
+  - img
+  - text: 45% Avg Utilization রাফিন আহমেদ Frontend Developer
+  - button:
+    - img
+  - button:
+    - img
+  - text: Utilization 82% 75 Busy Days 17 Free Days তানভীর হাসান Backend Developer
+  - button:
+    - img
+  - button:
+    - img
+  - text: Utilization 90% 83 Busy Days 9 Free Days সাদিয়া খাতুন UI/UX Designer
+  - button:
+    - img
+  - button:
+    - img
+  - text: Utilization 61% 56 Busy Days 36 Free Days ইমরান হোসেন QA Engineer
+  - button:
+    - img
+  - button:
+    - img
+  - text: Utilization 61% 56 Busy Days 36 Free Days নাফিসা আক্তার DevOps Engineer
+  - button:
+    - img
+  - button:
+    - img
+  - text: Utilization 64% 59 Busy Days 33 Free Days আরিফ রহমান Product Manager
+  - button:
+    - img
+  - button:
+    - img
+  - text: Utilization 49% 45 Busy Days 47 Free Days June 2025 July 2025 August 2025 September 2025 October 2025 Sun 1 Mon 2 Tue 3 Wed 4 Thu 5 Fri 6 Sat 7 Sun 8 Mon 9 Tue 10 Wed 11 Thu 12 Fri 13 Sat 14 Sun 15 Mon 16 Tue 17 Wed 18 Thu 19 Fri 20 Sat 21 Sun 22 Mon 23 Tue 24 Wed 25 Thu 26 Fri 27 Sat 28 Sun 29 Mon 30 Tue 1 Wed 2 Thu 3 Fri 4 Sat 5 Sun 6 Mon 7 Tue 8 Wed 9 Thu 10 Fri 11 Sat 12 Sun 13 Mon 14 Tue 15 Wed 16 Thu 17 Fri 18 Sat 19 Sun 20 Mon 21 Tue 22 Wed 23 Thu 24 Fri 25 Sat 26 Sun 27 Mon 28 Tue 29 Wed 30 Thu 31 Fri 1 Sat 2 Sun 3 Mon 4 Tue 5 Wed 6 Thu 7 Fri 8 Sat 9 Sun 10 Mon 11 Tue 12 Wed 13 Thu 14 Fri 15 Sat 16 Sun 17 Mon 18 Tue 19 Wed 20 Thu 21 Fri 22 Sat 23 Sun 24 Mon 25 Tue 26 Wed 27 Thu 28 Fri 29 Sat 30 Sun 31 Mon 1 Tue 2 Wed 3 Thu 4 Fri 5 Sat 6 Sun 7 Mon 8 Tue 9 Wed 10 Thu 11 Fri 12 Sat 13 Sun 14 Mon 15 Tue 16 Wed 17 Thu 18 Fri 19 Sat 20 Sun 21 Mon 22 Tue 23 Wed 24 Thu 25 Fri 26 Sat 27 Sun 28 Mon 29 Tue 30 Wed 1 Thu 2 Fri 3 Sat 4 Sun 5 Mon 6 Tue 7 Wed 8 Thu 9 Fri 10 Sat 11 Sun 12 Mon 13 Tue 14 Wed 15 Thu 16 Fri 17 Sat 18 Sun 19 Mon 20 Tue 21 Wed 22 Thu 23 Fri 24 Sat 25 Sun 26 Mon 27 Tue 28 Wed 29 Thu 30 Fri 31 রাফিন আহমেদ Frontend Developer
+  - button:
+    - img
+  - button:
+    - img
+  - img
+  - text: Pathao Rider App UI 6/3/2025 - 7/8/2025 25 work days (11 non-work)
+  - img
+  - text: Pathao Food Web 7/14/2025 - 7/30/2025 12 work days (5 non-work) Pathao Design System 8/8/2025 - 8/29/2025 15 work days (7 non-work) তানভীর হাসান Backend Developer
+  - button:
+    - img
+  - button:
+    - img
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - img
+  - text: Pathao API Gateway 6/1/2025 - 7/11/2025 28 work days (13 non-work) Pathao Legacy Code Cleanup 6/4/2025 - 6/16/2025 9 work days (4 non-work)
+  - img
+  - text: Pathao User DB Migration 7/15/2025 - 7/27/2025 8 work days (5 non-work) Pathao Backend Optimization 8/4/2025 - 9/1/2025 21 work days (8 non-work) সাদিয়া খাতুন UI/UX Designer
+  - button:
+    - img
+  - button:
+    - img
+  - text: Pathao Brand Guidelines 6/3/2025 - 6/17/2025 11 work days (4 non-work)
+  - img
+  - text: Pathao Customer Research 7/4/2025 - 7/25/2025 14 work days (8 non-work) Pathao Courier Prototype 8/15/2025 - 9/2/2025 14 work days (5 non-work) ইমরান হোসেন QA Engineer
+  - button:
+    - img
+  - button:
+    - img
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - img
+  - img
+  - text: Pathao App Testing 7/1/2025 - 7/27/2025 17 work days (10 non-work) Pathao Load Testing 8/15/2025 - 8/29/2025 10 work days (5 non-work) Pathao Security Audit 8/19/2025 - 9/12/2025 17 work days (8 non-work) নাফিসা আক্তার DevOps Engineer
+  - button:
+    - img
+  - button:
+    - img
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - button "2"
+  - text: Pathao CI/CD Setup 6/2/2025 - 6/30/2025 21 work days (8 non-work) Pathao Cloud Infrastructure 8/11/2025 - 9/1/2025 16 work days (6 non-work) Pathao Monitoring System 8/22/2025 - 9/9/2025 14 work days (5 non-work) আরিফ রহমান Product Manager
+  - button:
+    - img
+  - button:
+    - img
+  - button "2"
+  - button "2"
+  - img
+  - text: Pathao Expansion Strategy 7/2/2025 - 7/20/2025 12 work days (7 non-work) Pathao Market Analysis 8/14/2025 - 8/28/2025 10 work days (5 non-work) Pathao 2025 Roadmap 8/27/2025 - 9/8/2025 9 work days (4 non-work)
+```
