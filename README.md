@@ -273,8 +273,8 @@ If you find this project useful:
 
 **Nadim Tuhin**
 - GitHub: [@nadimtuhin](https://github.com/nadimtuhin)
-- Twitter: [@nadimtuhin](#)
-- Email: [contact@example.com](#)
+- Twitter: [@nadimtuhin](https://twitter.com/nadimtuhin)
+- Email: [nadim.tuhin@gmail.com](mailto:nadim.tuhin@gmail.com)
 
 ---
 
