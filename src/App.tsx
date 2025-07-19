@@ -13,6 +13,7 @@ import { ShareModal } from './components/Modals/ShareModal';
 import { ImportStateModal } from './components/Modals/ImportStateModal';
 import { LeaveModal } from './components/Modals/LeaveModal';
 import { ManagementModal } from './components/Management/ManagementModal';
+import { EmptyStatePrompt } from './components/EmptyState/EmptyStatePrompt';
 import { Resource, Project, Holiday, HolidaySettings, Leave } from './types';
 import { getShareParameterFromUrl, removeShareParameterFromUrl, decodeStateFromUrl } from './utils/shareUtils';
 
@@ -281,17 +282,10 @@ function App() {
 
         {/* Empty State */}
         {resources.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 mb-4">
-              Welcome to Resource Calendar! Get started by adding your first team member.
-            </p>
-            <button
-              onClick={handleAddResource}
-              className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-            >
-              Add Your First Resource
-            </button>
-          </div>
+          <EmptyStatePrompt
+            onAddResource={handleAddResource}
+            onLoadTestData={loadTestData}
+          />
         )}
       </main>
 
