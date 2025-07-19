@@ -11,7 +11,7 @@ A modern, visual resource allocation and project management tool that helps team
 
 ## 🎥 Demo
 
-Try it live: [Coming Soon] | [Watch Video Demo](#)
+Try it live: [https://resource-calendar-project-management.vercel.app](https://resource-calendar-project-management.vercel.app)
 
 ## ✨ Features
 
