@@ -14,7 +14,8 @@
       "Bash(gh repo edit:*)",
       "Bash(npx playwright:*)",
       "Bash(mkdir:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(npm run:*)"
     ],
     "deny": []
   }

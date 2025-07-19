@@ -26,7 +26,7 @@ async function takeSimpleScreenshots() {
   });
   const page = await context.newPage();
 
-  const baseUrl = 'https://resource-calendar-project-management-qz3pm227m.vercel.app';
+  const baseUrl = 'https://resource-calendar-project-management.vercel.app';
   await page.goto(baseUrl);
 
   const screenshotsDir = path.join(__dirname, '../screenshots');
@@ -39,6 +39,43 @@ async function takeSimpleScreenshots() {
   // Wait for page to load
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(2000);
+
+  // First, take empty state screenshot if present
+  console.log('Checking for empty state...');
+  const loadSampleButton = page.locator('button:has-text("Load Sample Data")');
+  if (await loadSampleButton.count() > 0) {
+    console.log('0. Taking empty state screenshot...');
+    await page.screenshot({ 
+      path: path.join(screenshotsDir, 'empty-state-new.png'),
+      fullPage: false
+    });
+    await optimizeImage(
+      path.join(screenshotsDir, 'empty-state-new.png'),
+      path.join(screenshotsDir, 'empty-state-new.jpg')
+    );
+  }
+
+  // Load test data if empty state is present
+  console.log('Loading test data...');
+  try {
+    if (await loadSampleButton.count() > 0) {
+      await loadSampleButton.click();
+      await page.waitForTimeout(3000);
+      console.log('Test data loaded from empty state');
+    } else {
+      // Try header load test data button
+      const loadTestDataButton = page.locator('button:has-text("Load Test Data")');
+      if (await loadTestDataButton.count() > 0) {
+        await loadTestDataButton.click();
+        await page.waitForTimeout(3000);
+        console.log('Test data loaded from header');
+      } else {
+        console.log('No load data buttons found - app may already have data');
+      }
+    }
+  } catch (error) {
+    console.log('Could not load test data, proceeding with existing data:', error.message);
+  }
 
   // 1. Full page screenshot
   console.log('1. Taking full page screenshot...');

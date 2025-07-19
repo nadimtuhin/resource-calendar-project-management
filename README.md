@@ -156,30 +156,30 @@ Deploy your own instance with one click:
 ### Main Dashboard - Empty State
 Get started with sample data or create your own resources.
 
-![Empty State](screenshots/empty-state.jpg)
+![Empty State](screenshots/empty-state-new.jpg)
 
 ### Full Application View
-Complete resource calendar with contiguous project bars and analytics.
+Complete resource calendar with Bengali test data, contiguous project bars, and analytics.
 
 ![Full Application](screenshots/full-page.jpg)
 
 ### Header Navigation
-Streamlined navigation with action groups and management center.
+Streamlined navigation with action groups, management center, and date range selector.
 
 ![Header Navigation](screenshots/header.jpg)
 
 ### Main Content Area
-Resource timeline with holiday visualization and project tracking.
+Resource timeline with holiday visualization, project status tracking, and team analytics.
 
 ![Main Content](screenshots/main-content.jpg)
 
 ### Mobile Responsive Design
-Optimized for mobile devices with touch-friendly interface.
+Optimized for mobile devices with touch-friendly interface and condensed layout.
 
 ![Mobile View](screenshots/mobile-view.jpg)
 
 ### Tablet View
-Perfect for mid-size devices with balanced layout.
+Perfect for mid-size devices with balanced layout and full feature access.
 
 ![Tablet View](screenshots/tablet-view.jpg)
 
