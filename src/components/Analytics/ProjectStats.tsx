@@ -228,7 +228,7 @@ export const ProjectStats: React.FC<ProjectStatsProps> = ({ projects, className 
                 {getStatusIcon(status as ProjectStatus)}
               </div>
               <p className="text-sm font-medium text-gray-900">{count}</p>
-              <p className="text-xs text-gray-500 capitalize">{status.replace('-', ' ')}</p>
+              <p className="text-xs text-gray-500 capitalize">{status?.replace('-', ' ') || 'Unknown'}</p>
             </div>
           ))}
         </div>

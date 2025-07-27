@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Edit2, Trash2, Calendar, User, AlertCircle, Clock, Filter, Activity, Pause, CheckCircle, XCircle } from 'lucide-react';
+import { Search, Edit2, Trash2, Calendar, User, AlertCircle, Filter, Activity, Pause, CheckCircle, XCircle } from 'lucide-react';
 import { Project, Resource, ProjectStatus } from '../../types';
 import { PRIORITY_COLORS } from '../../constants/colors';
 
@@ -149,7 +149,7 @@ export const ProjectList: React.FC<ProjectListProps> = ({
     return (
       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
         <Icon size={12} className="mr-1" />
-        {status.replace('-', ' ')}
+        {status?.replace('-', ' ') || 'Unknown'}
       </span>
     );
   };

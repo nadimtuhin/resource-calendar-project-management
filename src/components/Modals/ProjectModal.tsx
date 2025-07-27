@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Project, Resource } from '../../types';
+import { Project, Resource, ProjectStatus } from '../../types';
 import { X, Calendar, Trash2 } from 'lucide-react';
 import { formatDate } from '../../utils/dateUtils';
 import { MODAL_LEVELS } from '../../constants/zIndex';
@@ -32,6 +32,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const [workDaysNeeded, setWorkDaysNeeded] = useState('');
   const [resourceId, setResourceId] = useState('');
   const [priority, setPriority] = useState<'high' | 'medium' | 'low'>('medium');
+  const [status, setStatus] = useState<ProjectStatus>('planning');
   const [showRemoveWork, setShowRemoveWork] = useState(false);
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
 
@@ -44,6 +45,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       setWorkDaysNeeded(project.workDaysNeeded?.toString() || '');
       setResourceId(project.resourceId);
       setPriority(project.priority);
+      setStatus(project.status);
     } else {
       setTitle('');
       setStartDate(formatDate(new Date()));
@@ -52,6 +54,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       setWorkDaysNeeded('');
       setResourceId(resources[0]?.id || '');
       setPriority('medium');
+      setStatus('planning');
     }
     setShowRemoveWork(false);
     setSelectedDates([]);
@@ -82,6 +85,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
         workDaysNeeded: workDays,
         resourceId,
         priority,
+        status,
+        progress: 0,
       };
       
       if (project) {
@@ -257,6 +262,25 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
               <option value="high">High</option>
               <option value="medium">Medium</option>
               <option value="low">Low</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Status
+            </label>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value as ProjectStatus)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="planning">Planning</option>
+              <option value="active">Active</option>
+              <option value="on-hold">On Hold</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="overdue">Overdue</option>
+              <option value="at-risk">At Risk</option>
             </select>
           </div>
 
