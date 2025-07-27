@@ -7,8 +7,7 @@ import {
   getRandomDateInRange, 
   addWorkDays, 
   getWorkDaysCount,
-  generateDynamicHolidayDates,
-  addMonths 
+  generateDynamicHolidayDates
 } from './dateUtils';
 
 /**
@@ -25,9 +24,11 @@ const generateProject = (
   status: ProjectStatus,
   progress: number = 0
 ): Project => {
-  const endDate = addWorkDays(startDate, duration);
+  // Use Friday-Saturday [5, 6] as weekends (Bangladesh standard)
+  const weekendDays = [5, 6];
+  const endDate = addWorkDays(startDate, duration, weekendDays);
   const deadline = addDays(endDate, Math.floor(Math.random() * 7) + 1); // 1-7 days after end
-  const workDaysNeeded = getWorkDaysCount(startDate, endDate);
+  const workDaysNeeded = getWorkDaysCount(startDate, endDate, weekendDays);
   const estimatedHours = workDaysNeeded * 8; // 8 hours per work day
   const actualHours = Math.floor(estimatedHours * (progress / 100));
   

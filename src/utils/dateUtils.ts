@@ -104,12 +104,14 @@ export const getRandomDateInRange = (startDate: Date, endDate: Date): Date => {
 /**
  * Get work days count between two dates (excluding weekends)
  */
-export const getWorkDaysCount = (startDate: Date, endDate: Date): number => {
+export const getWorkDaysCount = (startDate: Date, endDate: Date, weekendDays: number[] = [0, 6]): number => {
   let count = 0;
   const current = new Date(startDate);
   
+  const isCustomWeekend = (checkDate: Date) => weekendDays.includes(checkDate.getDay());
+  
   while (current <= endDate) {
-    if (!isWeekend(current)) {
+    if (!isCustomWeekend(current)) {
       count++;
     }
     current.setDate(current.getDate() + 1);
@@ -121,13 +123,15 @@ export const getWorkDaysCount = (startDate: Date, endDate: Date): number => {
 /**
  * Add work days to a date (skipping weekends)
  */
-export const addWorkDays = (date: Date, workDays: number): Date => {
+export const addWorkDays = (date: Date, workDays: number, weekendDays: number[] = [0, 6]): Date => {
   const result = new Date(date);
   let addedDays = 0;
   
+  const isCustomWeekend = (checkDate: Date) => weekendDays.includes(checkDate.getDay());
+  
   while (addedDays < workDays) {
     result.setDate(result.getDate() + 1);
-    if (!isWeekend(result)) {
+    if (!isCustomWeekend(result)) {
       addedDays++;
     }
   }
@@ -184,7 +188,7 @@ export const generateDynamicHolidayDates = (year?: number) => {
 /**
  * Validate that test data is fresh and relevant
  */
-export const validateDataFreshness = (projects: any[], holidays: any[]) => {
+export const validateDataFreshness = (projects: { startDate: string; endDate: string }[], holidays: { date: string }[]) => {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
