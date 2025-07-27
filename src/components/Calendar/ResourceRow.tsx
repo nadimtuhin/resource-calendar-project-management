@@ -2,8 +2,8 @@ import React from 'react';
 import { Resource, Project, Holiday, Leave } from '../../types';
 import { DayCell } from './DayCell';
 import { Edit2, Trash2 } from 'lucide-react';
-import { ContiguousProjectBar } from './ContiguousProjectBar';
-import { groupContiguousProjects } from '../../utils/projectGrouping';
+import { OverlappingProjectBar } from './OverlappingProjectBar';
+import { groupOverlappingProjects } from '../../utils/projectGrouping';
 
 interface ResourceRowProps {
   resource: Resource;
@@ -47,11 +47,15 @@ export const ResourceRow: React.FC<ResourceRowProps> = ({
     return name.length > maxLength ? name.substring(0, maxLength) + '...' : name;
   };
 
-  // Get contiguous project groups for this resource
-  const contiguousGroups = groupContiguousProjects(projects, dates, resource.id);
+  // Get overlapping project groups for this resource (with divider support)
+  const overlappingGroups = groupOverlappingProjects(projects, dates, resource.id);
+  
+  // Calculate dynamic height based on maximum layers needed
+  const maxLayer = overlappingGroups.reduce((max, group) => Math.max(max, group.layer), 0);
+  const rowHeight = Math.max(64, 64 + (maxLayer * 16)); // Base height + layer height
 
   return (
-    <div className="flex border-b border-gray-200 hover:bg-gray-50 relative">
+    <div className="flex border-b border-gray-200 hover:bg-gray-50 relative" style={{ height: `${rowHeight}px` }}>
       {/* Resource info column */}
       <div className="w-32 p-3 border-r border-gray-200 bg-white sticky left-0 z-10">
         <div className="flex items-center justify-between">
@@ -102,21 +106,23 @@ export const ResourceRow: React.FC<ResourceRowProps> = ({
           />
         ))}
         
-        {/* Contiguous project bars overlay */}
+        {/* Overlapping project bars overlay with dividers */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="relative h-full pointer-events-auto">
-            {contiguousGroups.map((group, index) => (
-              <ContiguousProjectBar
+            {overlappingGroups.map((group, index) => (
+              <OverlappingProjectBar
                 key={`${group.project.id}-${group.startIndex}-${index}`}
                 project={group.project}
                 resourceColor={resource.color}
                 startIndex={group.startIndex}
                 span={group.span}
+                layer={group.layer}
                 dates={dates}
                 onEdit={onEditProject}
                 onDelete={onDeleteProject}
                 isHoliday={isHoliday}
                 isWeekend={isWeekend}
+                hasDividerAfter={group.hasDividerAfter}
               />
             ))}
           </div>
