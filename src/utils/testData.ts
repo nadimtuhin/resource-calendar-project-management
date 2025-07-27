@@ -223,6 +223,18 @@ export const generateTestData = (): { resources: Resource[]; projects: Project[]
       'planning',
       10
     ),
+    // Add overlapping project for the same resource (Frontend Developer)
+    generateProject(
+      'p9b',
+      'Pathao Mobile Refactor',
+      'Refactoring mobile app components',
+      '1',
+      getRandomDateInRange(addDays(dateRanges.currentMonth.start, 12), addDays(dateRanges.currentMonth.start, 18)),
+      8,
+      'high',
+      'active',
+      65
+    ),
     generateProject(
       'p10',
       'Pathao User DB Migration',
@@ -233,6 +245,18 @@ export const generateTestData = (): { resources: Resource[]; projects: Project[]
       'high',
       'planning',
       5
+    ),
+    // Add another overlapping project for Backend Developer
+    generateProject(
+      'p10b',
+      'Pathao API Documentation',
+      'Creating comprehensive API documentation',
+      '2',
+      getRandomDateInRange(addDays(dateRanges.currentMonth.start, 15), addDays(dateRanges.currentMonth.start, 22)),
+      6,
+      'medium',
+      'active',
+      30
     )
   );
   
