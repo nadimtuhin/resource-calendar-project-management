@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Resource, Project, Holiday, HolidaySettings, Leave, WorkDayStats } from '../types';
-import { saveResources, loadResources, saveProjects, loadProjects, saveHolidaySettings, loadHolidaySettings, saveLeaves, loadLeaves, clearAllData as clearStorageData } from '../utils/storageUtils';
+import { StorageFactory, StorageAdapter } from '../storage';
 import { generateTestData, generateLeaveData } from '../utils/testData';
 
 // Helper function to get default date range
@@ -16,6 +16,7 @@ export const useResourceCalendar = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [leaves, setLeaves] = useState<Leave[]>([]);
   const [loading, setLoading] = useState(true);
+  const [storageAdapter, setStorageAdapter] = useState<StorageAdapter | null>(null);
   const [holidaySettings, setHolidaySettings] = useState<HolidaySettings>({
     weekendDays: [5, 6], // Friday and Saturday (0 = Sunday, 1 = Monday, etc.)
     holidays: [],
@@ -42,40 +43,62 @@ export const useResourceCalendar = () => {
     return getDefaultDateRange();
   });
 
-  // Load data from localStorage on mount
+  // Initialize storage adapter and load data on mount
   useEffect(() => {
-    const savedResources = loadResources();
-    const savedProjects = loadProjects();
-    const savedHolidaySettings = loadHolidaySettings();
-    const savedLeaves = loadLeaves();
+    const initializeStorage = async () => {
+      try {
+        const config = StorageFactory.getConfigFromEnvironment();
+        const adapter = await StorageFactory.create(config);
+        setStorageAdapter(adapter);
+        
+        // Load data from adapter
+        const [savedResources, savedProjects, savedHolidaySettings, savedLeaves] = await Promise.all([
+          adapter.getResources(),
+          adapter.getProjects(),
+          adapter.getHolidaySettings(),
+          adapter.getLeaves(),
+        ]);
+        
+        setResources(savedResources);
+        setProjects(savedProjects);
+        setHolidaySettings(savedHolidaySettings);
+        setLeaves(savedLeaves);
+      } catch (error) {
+        console.error('Failed to initialize storage:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
     
-    setResources(savedResources);
-    setProjects(savedProjects);
-    setHolidaySettings(savedHolidaySettings);
-    setLeaves(savedLeaves);
-    setLoading(false);
+    initializeStorage();
   }, []);
 
-  // Save resources to localStorage whenever they change
+  // Save resources to storage adapter whenever they change
   useEffect(() => {
-    if (!loading) {
-      saveResources(resources);
+    if (!loading && storageAdapter) {
+      storageAdapter.saveResources(resources).catch(error => {
+        console.error('Failed to save resources:', error);
+      });
     }
-  }, [resources, loading]);
+  }, [resources, loading, storageAdapter]);
 
-  // Save projects to localStorage whenever they change
+  // Save projects to storage adapter whenever they change
   useEffect(() => {
-    if (!loading) {
-      saveProjects(projects);
+    if (!loading && storageAdapter) {
+      storageAdapter.saveProjects(projects).catch(error => {
+        console.error('Failed to save projects:', error);
+      });
     }
-  }, [projects, loading]);
+  }, [projects, loading, storageAdapter]);
 
-  // Save holiday settings to localStorage whenever they change
+  // Save holiday settings to storage adapter whenever they change
   useEffect(() => {
-    if (!loading) {
-      saveHolidaySettings(holidaySettings);
+    if (!loading && storageAdapter) {
+      storageAdapter.saveHolidaySettings(holidaySettings).catch(error => {
+        console.error('Failed to save holiday settings:', error);
+      });
     }
-  }, [holidaySettings, loading]);
+  }, [holidaySettings, loading, storageAdapter]);
 
   // Save date range to localStorage whenever it changes
   useEffect(() => {
@@ -87,12 +110,14 @@ export const useResourceCalendar = () => {
     }
   }, [dateRange, loading]);
 
-  // Save leaves to localStorage whenever they change
+  // Save leaves to storage adapter whenever they change
   useEffect(() => {
-    if (!loading) {
-      saveLeaves(leaves);
+    if (!loading && storageAdapter) {
+      storageAdapter.saveLeaves(leaves).catch(error => {
+        console.error('Failed to save leaves:', error);
+      });
     }
-  }, [leaves, loading]);
+  }, [leaves, loading, storageAdapter]);
 
   const addResource = useCallback((resource: Omit<Resource, 'id'>) => {
     const newResource: Resource = {
@@ -230,7 +255,7 @@ export const useResourceCalendar = () => {
     }));
   }, []);
 
-  const clearAllData = useCallback(() => {
+  const clearAllData = useCallback(async () => {
     setResources([]);
     setProjects([]);
     setLeaves([]);
@@ -243,8 +268,19 @@ export const useResourceCalendar = () => {
       },
     });
     setDateRange(getDefaultDateRange());
-    clearStorageData();
-  }, []);
+    
+    if (storageAdapter) {
+      try {
+        await storageAdapter.clearAll();
+      } catch (error) {
+        console.error('Failed to clear storage:', error);
+      }
+    }
+    
+    // Also clear localStorage items that aren't managed by the adapter
+    localStorage.removeItem('resource-calendar-date-range');
+    localStorage.removeItem('management-panel-state');
+  }, [storageAdapter]);
 
   // Holiday management functions
   const addHoliday = useCallback((holiday: Omit<Holiday, 'id'>) => {
